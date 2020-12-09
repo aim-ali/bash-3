@@ -1,0 +1,39 @@
+- hosts: server
+  tasks:
+    - name: copy file idn ke ubuntu
+      copy:
+        src: "{{ item }}"
+        dest: /opt
+      loop:
+      - idn.txt
+      - idn2.txt
+      when:
+      - ansible_distribution == "Ubuntu"
+      notify:
+      - change_permission_ubuntu
+    - name: copy file idn ke centos
+      copy:
+        src: "{{ item }}"
+        dest: /tmp
+      loop:
+      - idn.txt
+      - idn2.txt
+      when:
+      - ansible_distribution == "CentOS"
+      notify:
+      - change_permission_centos
+  handlers:
+    - name: change_permission_ubuntu
+      file:
+        path: "{{ item }}"
+        mode: 0777
+      loop:
+      - /opt/idn.txt
+      - /opt/idn2.txt
+    - name: change_permission_centos
+      file:
+        path: "{{ item }}"
+        mode: 077
+      loop:
+      - /tmp/idn.txt
+      - /tmp/idn2.txt
